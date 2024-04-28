@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+    <head></head>
+    <body>
+        <div id="maincontainer"></div>
+        <script>
+            var main = document.getElementById("maincontainer");
+            var h2Element = document.createElement("h2");
+            h2Element.textContent = "Exercise 04: JavaScript&DOM";
+            main.appendChild(h2Element);
+
+            var timeButton = document.createElement("button");
+            timeButton.textContent = "Click me to display Date and Time";
+            main.appendChild(timeButton);
+
+            if (typeof(Worker) !== "undefined") {
+                var webWorker = new Worker("timeWorker.js");
+                var isRunning = false;
+                var stopTime;
+                timeButton.addEventListener("click", function() { // Button check
+                    if (!isRunning) {
+                        isRunning = true;
+                        webWorker.onmessage = function(event) {
+                            timeButton.textContent = event.data.time;
+                            timeButton.style.backgroundColor = event.data.color;
+                            timeButton.style.position = "fixed";
+                            timeButton.style.top = "0px";
+                            timeButton.style.right = "0px";
+                            stopTime = event.data.time;
+                        };
+                    } else {
+                        isRunning = false;
+                        timeButton.textContent = stopTime;
+                        timeButton.style.position = "";
+                        webWorker.onmessage = null;
+                    };
+                });
+            } else {
+                timeButton.textContent = "Sorry! No Web Worker support..";
+            };
+    
+            var newLine1 = document.createElement("br");
+            main.appendChild(newLine1);
+            var newLine2 = document.createElement("br");
+            main.appendChild(newLine2);
+
+            var personalInfo = document.createElement("a");
+            personalInfo.textContent = "Personal Info";
+            personalInfo.style.textDecoration = "underline";
+            personalInfo.style.color = "pink";
+            personalInfo.addEventListener("mouseout", function(){
+                personalInfo.style.color = "pink";
+                personalInfo.style.backgroundColor = "";
+            });
+            personalInfo.addEventListener("mouseover", function(){
+                personalInfo.style.color = "blue";
+                personalInfo.style.backgroundColor = "yellow";
+            });
+
+            var infoList = document.createElement("ul");
+            var infoItems = ["Pattarachai Wannasuntad, 65010815",
+                            "Subject: Web Application Development",
+                            "Semester: 2/2566"];
+            infoItems.forEach(function(item){
+                var li = document.createElement("li");
+                li.textContent = item;
+                infoList.appendChild(li);
+            });
+            infoList.style.display = "none";
+            personalInfo.addEventListener("click", function(){
+                if (infoList.style.display === "none"){
+                    infoList.style.display = "block";
+                } else{
+                    infoList.style.display = "none";
+                }
+            });
+            main.appendChild(personalInfo);
+            main.appendChild(infoList);
+
+            var h1Element = document.createElement("h1");
+            h1Element.textContent = "Snapshots";
+            main.appendChild(h1Element);
+
+            var snapshotList = document.createElement("ul");
+            var snapshotItems = ["Fireworks", "Crest", "Action", "Buffalo"];
+            var snapshotPic = {
+                "Fireworks" : "https://c02.purpledshub.com/uploads/sites/41/2018/07/GettyImages-609942456use-94e3841.jpg?w=910&webp=1",
+                "Crest" : "https://www.shutterstock.com/image-vector/premium-quality-best-choice-medal-600nw-1929034580.jpg", 
+                "Action" : "https://variety.com/wp-content/uploads/2023/06/MSDCOMM_FE001.jpg?w=800", 
+                "Buffalo" : "https://i.imgflip.com/3eg7z5.jpg"
+            };
+            snapshotItems.forEach(function(item){
+                var li = document.createElement("li");
+                var span = document.createElement("span");
+                span.textContent = item;
+                span.style.color = "blue";
+                span.style.textDecoration = "underline";
+                li.appendChild(span);
+                li.addEventListener("click", function(){
+                    showPicture(item);
+                });
+                snapshotList.appendChild(li);
+            });
+
+            var pictureElement = document.createElement("img");
+            pictureElement.src = "https://c.wallhere.com/photos/73/1c/3440x1440_px_Cityscape_dusk_sea_ship_ultrawide-834831.jpg!d";
+            pictureElement.style.width = "500px";
+            
+            function showPicture(item){
+                var pictureSrc = snapshotPic[item];
+                if (pictureSrc){
+                    pictureElement.style.display = "none";
+                    pictureElement.src = pictureSrc;
+                    pictureElement.style.display = "block";
+                };
+            };
+            main.appendChild(snapshotList);
+            main.appendChild(pictureElement);
+        </script>
+    </body>
+</html>
